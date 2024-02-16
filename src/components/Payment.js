@@ -18,8 +18,8 @@ function Payment({items, onClose}) {
 
     // Combine the form data with the cart items
     const orderData = {
-      personalInfo: formValues,
-      cartItems: items,
+      User: formValues,
+      products: items,
     };
 
     console.log(orderData)
@@ -97,8 +97,8 @@ function Payment({items, onClose}) {
                               <div className="mt-2">
                                 <input
                                   type="text"
-                                  name="Cardholder"
-                                  id="Cardholder"
+                                  name="cardholder"
+                                  id="cardholder"
                                   autoComplete="given-name"
                                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
@@ -208,7 +208,7 @@ function Payment({items, onClose}) {
                               <div className="mt-2">
                                 <input
                                   type="text"
-                                  name="region"
+                                  name="State/Province"
                                   id="region"
                                   autoComplete="address-level1"
                                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
