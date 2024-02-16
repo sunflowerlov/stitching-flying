@@ -1,0 +1,7 @@
+.app-nav {
+  /* Position the nav bar on top of the main content */
+  position: fixed; /* or use 'fixed' if you want the nav to stay at the top during scrolling */
+  top: 0;
+  left: 0;
+  z-index: 10; /* Ensures the nav is above other content */
+}

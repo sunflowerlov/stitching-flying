@@ -1,23 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from 'react-router-dom';
+import React, { useState } from 'react';
+import './App.scss'
+import Nav from './components/Nav'
+import Main from './components/Main';
+import Shop from './components/Shop';
+import Cart from './components/Cart';
+import Contact from './components/Contact';
+import Payment from './components/Payment';
+import Item1 from './components/items/Item1';
+import Item2 from './components/items/Item2'; // Component for item 2
+
+
+
 
 function App() {
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartVisible, setCartVisible] = useState(false);
+  const [isPaymentVisible, setPaymentVisible] = useState(false);
+  
+  const toggleCart = () => {
+    console.log('cart', cartItems)
+    setCartVisible(!isCartVisible); //if false then true
+  };
+
+  const togglePayment = () => {
+    setPaymentVisible(!isPaymentVisible); //if false then true
+  };
+
+  const addToCart = (product) => {
+    const existingProduct = cartItems.find(item => item.id === product.id);
+    if (existingProduct) {
+      // If the product exists, map over the cart items and increase the quantity of the existing product
+      setCartItems(cartItems.map(item => 
+        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+      ));
+    } else {
+      setCartItems([...cartItems, product]);
+    }
+    setCartVisible(true); // Open cart when new item is added
+  };
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Router>
+      <Nav onCartClick={toggleCart} onPaymentClick={togglePayment} />
+      {isCartVisible && <Cart items={cartItems} onClose={() => setCartVisible(false)} onPaymentClick={togglePayment}/>}
+      {isPaymentVisible && <Payment items={cartItems} onClose={() => setPaymentVisible(false)} />}
+
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/item/0" element={<Item1 addToCart={addToCart}/>} />
+        <Route path="/item/1" element={<Item2 addToCart={addToCart}/>} />
+        {/* <Route path="/about" element={<About />} /> */}
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/payment" element={<Payment />} />
+      </Routes>
+
+    </Router>
     </div>
   );
 }
