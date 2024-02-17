@@ -1,17 +1,17 @@
 import { StarIcon } from '@heroicons/react/20/solid'
 
-import main from '../../assets/images/shop/item1/main.jpg'
-import detail_l from '../../assets/images/shop/item1/detail_l.jpg'
+import main from '../../assets/images/shop/item2/main.JPG'
+import detail_l from '../../assets/images/shop/item2/detail_l.jpg'
 import detail_r from '../../assets/images/shop/item1/detail_r.jpg'
-import light from '../../assets/images/shop/item1/light.jpg'
+import detail_front from '../../assets/images/shop/item2/detail_front.jpg'
 
 const product = {
-  name: 'Crystal Light',
-  price: '$1048',
+  name: 'Camellia',
+  price: '$135',
   href: '#',
   images: [
     {
-      src: light,
+      src: detail_front,
       alt: 'Two each of gray, white, and black shirts laying flat.',
     },
     {
@@ -39,8 +39,8 @@ const product = {
     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
 }
 
-const productForSubmit =   {
-  id: 0,
+const productForSubmit =  {
+  id: 3,
   name: product.name,
   href: '#',
   color: 'Salmon',
@@ -57,7 +57,7 @@ function classNames(...classes) {
 }
 
 
-function Item1 ({ addToCart }) {
+function Item4 ({ addToCart }) {
 
   const handleAddToCart = (e, product) => {
     e.preventDefault();
@@ -185,4 +185,4 @@ function Item1 ({ addToCart }) {
     </div>
   )
 }
-export default Item1;
+export default Item4;

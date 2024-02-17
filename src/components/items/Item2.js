@@ -7,7 +7,7 @@ import detail_front from '../../assets/images/shop/item2/detail_front.jpg'
 
 const product = {
   name: 'Dragon',
-  price: '$335',
+  price: '$735',
   href: '#',
   images: [
     {

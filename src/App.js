@@ -13,6 +13,8 @@ import Contact from './components/Contact';
 import Payment from './components/Payment';
 import Item1 from './components/items/Item1';
 import Item2 from './components/items/Item2'; // Component for item 2
+import Item3 from './components/items/Item3';
+import Item4 from './components/items/Item4';
 
 
 
@@ -54,8 +56,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/shop" element={<Shop />} />
-        <Route path="/item/0" element={<Item1 addToCart={addToCart}/>} />
-        <Route path="/item/1" element={<Item2 addToCart={addToCart}/>} />
+        <Route path="/item/1" element={<Item1 addToCart={addToCart}/>} />
+        <Route path="/item/2" element={<Item2 addToCart={addToCart}/>} />
+        <Route path="/item/3" element={<Item3 addToCart={addToCart}/>} />
+        <Route path="/item/4" element={<Item4 addToCart={addToCart}/>} />
         {/* <Route path="/about" element={<About />} /> */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
