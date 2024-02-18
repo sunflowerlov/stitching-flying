@@ -1,12 +1,12 @@
-.payment{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 
+.error {
+  border: 1px solid red; /* Adds a red border to indicate an error */
+  background-color: #ffe6e6; /* Optional: Adds a light red background */
 }
-.payment-box {
-  width: 700px;
-  height: 400px;
-  background-color: antiquewhite;
+
+.warning-message {
+  color: red; /* Set the text color to red for visibility */
+  font-size: 0.8rem; /* Smaller font size for the warning message */
+  margin-top: 4px; /* Add a little space above the warning message */
+  display: block; /* Ensure the message takes up its own line */
 }
