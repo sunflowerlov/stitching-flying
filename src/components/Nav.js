@@ -7,7 +7,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-function Nav({ onCartClick, onPaymentClick }) {
+function Nav({ onCartClick}) {
   const [currentNavItem, setCurrentNavItem] = useState('Home');
   
   const handleNavItemClick = (itemName) => {
@@ -20,8 +20,11 @@ function Nav({ onCartClick, onPaymentClick }) {
     { name: 'About', href: '/About', current: currentNavItem === 'About' },
     { name: 'Contact', href: '/Contact', current: currentNavItem === 'Contact' },
     { name: 'Cart', href: '/Cart', current: currentNavItem === 'Cart', isCartLink: true },
-    //{ name: 'Payment', href: '/Payment', current: currentNavItem === 'Payment', isPaymentLink: true },
   ];
+
+  const account = [
+    { name: 'Profile', href: '/Profile', current: currentNavItem === 'Profile' },
+  ]
 
   return (
     <Disclosure as="nav" className="app-nav bg-custom-green bg-opacity-50 w-screen">
@@ -111,22 +114,12 @@ function Nav({ onCartClick, onPaymentClick }) {
                   <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <Menu.Item>
                       {({ active }) => (
-                        <a
-                          href="#"
+                        <Link
+                          to="/Profile"
                           className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                         >
                           Your Profile
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                        >
-                          Settings
-                        </a>
+                        </Link>
                       )}
                     </Menu.Item>
                     <Menu.Item>

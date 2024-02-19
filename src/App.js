@@ -11,6 +11,9 @@ import Shop from './components/Shop';
 import Cart from './components/Cart';
 import Contact from './components/Contact';
 import Payment from './components/Payment';
+
+import Profile from './components/Profile';
+
 import Item1 from './components/items/Item1';
 import Item2 from './components/items/Item2'; // Component for item 2
 import Item3 from './components/items/Item3';
@@ -63,6 +66,7 @@ function App() {
         {/* <Route path="/about" element={<About />} /> */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
 
     </Router>

@@ -40,7 +40,7 @@ const product = {
 }
 
 const productForSubmit =  {
-  id: 3,
+  id: 4,
   name: product.name,
   href: '#',
   color: 'Salmon',

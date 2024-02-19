@@ -22,7 +22,7 @@ def hello_world():
     return 'Hello, World!'
 
 @app.route('/api/data', methods=['GET'])
-def get_data():
+def get_products_data():
     conn = None
     try:
         # Connect to the database
@@ -48,6 +48,33 @@ def get_data():
         if conn is not None:
             conn.close()
 
+# @app.route('/api/user_order-history', methods=['GET'])
+# def get_user_order_history_data():
+#     conn = None
+#     try:
+#         # Connect to the database
+#         conn = psycopg2.connect(**db_config)
+#         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+#         # Execute a database query
+#         cur.execute("SELECT * FROM products")
+#         rows = cur.fetchall()
+
+#         # Convert query results to a list of dictionaries
+#         result = []
+#         for row in rows:
+#             result.append(dict(row))
+
+#         # Close the database connection
+#         cur.close()
+#         return jsonify(result)  # Convert the result to JSON and return
+#     except (Exception, psycopg2.DatabaseError) as error:
+#         print(error)
+#         return jsonify({"error": str(error)}), 500  # Return an error response
+#     finally:
+#         if conn is not None:
+#             conn.close()
+
 @app.route('/api/place-order', methods=['POST'])
 def place_order():
     order_data = request.json  # Assuming the payload structure you provided earlier
@@ -63,7 +90,7 @@ def place_order():
         order_date = order_data.get('date_of_order', None)
 
         # Ensure all required user information is present
-        required_fields = ['cardholder', 'city', 'country', 'email', 'expire-date', 'State/Province', 'postal-code', 'street-address']
+        required_fields = ['cardholder', 'city', 'country', 'email', 'expire-date', 'State/Province', 'postal-code', 'street-address', 'card-number']
         for field in required_fields:
             if field not in user_info or not user_info[field]:
                 return jsonify({"error": f"Missing user information: {field}"}), 400
