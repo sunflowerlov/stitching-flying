@@ -30,6 +30,28 @@ function Payment({ items, onClose }) {
       email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     };
 
+    const calculateTotalPrice = (items) => {
+      let total = 0;
+    
+      items.forEach(item => {
+        // Remove the dollar sign and convert the price to a number
+        const price = parseFloat(item.price.replace('$', ''));
+        // Multiply the price by the quantity
+        total += price * item.quantity;
+      });
+      return total;
+    };
+    const subtotal = calculateTotalPrice(items);
+
+    // Combine the form data with the cart items
+    const orderData = {
+      order: formValues,
+      products: items,
+      subtotal: subtotal.toFixed(2),
+      date_of_order: today.toLocaleDateString()
+    };
+    console.log('order', orderData)
+
     // Check for empty fields and validate formats
     let formIsValid = true;
     event.target.querySelectorAll('input').forEach(input => {
@@ -50,16 +72,6 @@ function Payment({ items, onClose }) {
     if (!formIsValid) {
       return; // Stop if the form is invalid
     }
-
-
-    // Combine the form data with the cart items
-    const orderData = {
-      user: formValues,
-      products: items,
-      date_of_order: today.toLocaleDateString()
-    };
-
-    console.log(orderData)
 
     //Send the combined data to the server
     try {

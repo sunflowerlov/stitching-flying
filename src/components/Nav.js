@@ -2,17 +2,23 @@ import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '../AuthContext'; // Adjust the import path as necessary
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 function Nav({ onCartClick}) {
+  const { logout } = useAuth();
   const [currentNavItem, setCurrentNavItem] = useState('Home');
   
   const handleNavItemClick = (itemName) => {
     setCurrentNavItem(itemName);
   };
+
+ function handleLoginStatus () {
+    logout();
+  }
 
   const navigation = [
     { name: 'Home', href: '/', current: currentNavItem === 'Home' },
@@ -125,6 +131,7 @@ function Nav({ onCartClick}) {
                     <Menu.Item>
                       {({ active }) => (
                         <a
+                          onClick={handleLoginStatus}
                           href="#"
                           className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                         >

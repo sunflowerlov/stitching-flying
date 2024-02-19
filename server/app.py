@@ -1,14 +1,15 @@
 from flask import Flask
 from flask_cors import CORS
 from flask import Flask, jsonify  # Import jsonify along with Flask
+from flask import request
+from flask import session
+from werkzeug.security import check_password_hash
 import psycopg2
 import psycopg2.extras
-from flask import request
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
-
 db_config = {
     "host": "localhost",
     "database": "stitch_flying",
@@ -16,10 +17,14 @@ db_config = {
     "password": "LEE86012"
 }
 
+
 @app.route('/')
 def hello_world():
-    print ('Hello World')
+    print('Hello World')
     return 'Hello, World!'
+
+# get products data
+
 
 @app.route('/api/data', methods=['GET'])
 def get_products_data():
@@ -28,7 +33,7 @@ def get_products_data():
         # Connect to the database
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        
+
         # Execute a database query
         cur.execute("SELECT * FROM products")
         rows = cur.fetchall()
@@ -48,36 +53,77 @@ def get_products_data():
         if conn is not None:
             conn.close()
 
-# @app.route('/api/user_order-history', methods=['GET'])
-# def get_user_order_history_data():
-#     conn = None
-#     try:
-#         # Connect to the database
-#         conn = psycopg2.connect(**db_config)
-#         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        
-#         # Execute a database query
-#         cur.execute("SELECT * FROM products")
-#         rows = cur.fetchall()
+# register account
+@app.route('/api/users', methods=['POST'])
+def upload_user():
+    order_data = request.json
+    # Connect to the database
+    conn = psycopg2.connect(**db_config)
+    cur = conn.cursor()
+    print(order_data)
+    # Extract user information from the order data
+    user_name = order_data['name']
+    user_email = order_data['email']
+    user_password = order_data['password']
 
-#         # Convert query results to a list of dictionaries
-#         result = []
-#         for row in rows:
-#             result.append(dict(row))
+    # Check if email already exists
+    cur.execute("SELECT * FROM users WHERE email = %s", (user_email,))
+    if cur.fetchone() is not None:
+        cur.close()
+        conn.close()
+        return jsonify({"error": "Email already exists"}), 409  # 409 Conflict
+        # Insert user data into the database
+    try:
+        cur.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s) RETURNING id",
+                    (user_name, user_email, user_password))
+        user_id = cur.fetchone()[0]  # Get the generated user_id
+        conn.commit()  # Commit the transaction
+    except Exception as e:
+        conn.rollback()  # Rollback the transaction on error
+        print(f"Error inserting user: {e}")
+    finally:
+        cur.close()
+        conn.close()
 
-#         # Close the database connection
-#         cur.close()
-#         return jsonify(result)  # Convert the result to JSON and return
-#     except (Exception, psycopg2.DatabaseError) as error:
-#         print(error)
-#         return jsonify({"error": str(error)}), 500  # Return an error response
-#     finally:
-#         if conn is not None:
-#             conn.close()
+    # Return a response (success message, user ID, etc.)
+    return jsonify({"message": "User registered successfully"}), 201
+
+# login account
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json['formValues']
+    email = data['email']
+    password = data['password']
+
+    # Connect to your database
+    conn = psycopg2.connect(**db_config)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    try:
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+        print('uu', user['password'], password)
+        if user and user['password'] == password:
+            # Login successful
+            return jsonify({"message": "Login successful", "user": {"email": user['email'], "name": user['name']}}), 200
+        else:
+            # Login failed
+            return jsonify({"error": "Invalid email or password"}), 401
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "An error occurred"}), 500
+    finally:
+        cur.close()
+        conn.close()
+
 
 @app.route('/api/place-order', methods=['POST'])
 def place_order():
-    order_data = request.json  # Assuming the payload structure you provided earlier
+    if 'user_id' not in session:
+        return jsonify({"error": "User not logged in"}), 401  # Unauthorized
+
+    user_id = session['user_id']
+    order_data = request.json
 
     # Connect to the database
     conn = psycopg2.connect(**db_config)
@@ -85,40 +131,21 @@ def place_order():
 
     try:
         # Extract user information from the order data
-        user_info = order_data.get('user', {})
+        orders = order_data.get('order', {})
         products = order_data.get('products', [])
         order_date = order_data.get('date_of_order', None)
-
-        # Ensure all required user information is present
-        required_fields = ['cardholder', 'city', 'country', 'email', 'expire-date', 'State/Province', 'postal-code', 'street-address', 'card-number']
-        for field in required_fields:
-            if field not in user_info or not user_info[field]:
-                return jsonify({"error": f"Missing user information: {field}"}), 400
+        subtotal = order_data.get('subtotal', None)
 
         # Insert or update user information
         cur.execute("""
-            INSERT INTO users (cardholder, city, country, email, expire_date, state_province, post_code, street_address, card_number)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (cardholder) DO UPDATE SET
-            city = EXCLUDED.city,
-            country = EXCLUDED.country,
-            email = EXCLUDED.email,
-            expire_date = EXCLUDED.expire_date,
-            state_province = EXCLUDED.state_province,
-            post_code = EXCLUDED.post_code,
-            street_address = EXCLUDED.street_address,
-            card_number = EXCLUDED.card_number
-            RETURNING id;
+            INSERT INTO orders (user_id, cardholder, city, country, email, expire_date, state_province, post_code, street_address, card_number, date_of_order, subtotal)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
         """, (
-            user_info['cardholder'], user_info['city'], user_info['country'],
-            user_info['email'], user_info['expire-date'], user_info['State/Province'],
-            user_info['postal-code'], user_info['street-address'], user_info['card-number']
+            user_id,
+            orders['cardholder'], orders['city'], orders['country'],
+            orders['email'], orders['expire-date'], orders['State/Province'],
+            orders['postal-code'], orders['street-address'], orders['card-number'], order_date, subtotal
         ))
-
-        user_id = cur.fetchone()[0]
-
-        # Insert a new order for the user
-        cur.execute("INSERT INTO orders (user_id, date_of_order) VALUES (%s, %s) RETURNING id;", (user_id, order_date))
         order_id = cur.fetchone()[0]
 
         # Handle products in the order
@@ -134,22 +161,16 @@ def place_order():
         # Commit the transaction
         conn.commit()
 
-        # Return a success response
-        return jsonify({"message": "Order placed successfully"}), 201
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Database error: {error}")
+    except Exception as e:
         conn.rollback()  # Rollback the transaction on error
-        return jsonify({"error": str(error)}), 500
+        print(f"Error inserting order: {e}")
+        return {"error": str(e)}
 
     finally:
-        if cur is not None:
-            cur.close()
-        if conn is not None:
-            conn.close()
+        cur.close()
+        conn.close()
 
-
-
+    return {"message": "Order inserted successfully", "order_id": order_id}
 
 
 if __name__ == '__main__':

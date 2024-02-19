@@ -1,9 +1,13 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '../AuthContext'; // Adjust the path as necessary
+import { useNavigate } from 'react-router-dom';
 
 export default function Cart({ items, onClose, onPaymentClick }) { //items all products in items
-  console.log('items', items);
+  //console.log('items', items);
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
 
   const calculateTotalPrice = (items) => {
     let total = 0;
@@ -17,6 +21,15 @@ export default function Cart({ items, onClose, onPaymentClick }) { //items all p
     return total;
   };
   const subtotal = calculateTotalPrice(items);
+
+  const handleCheckout = () => {
+    if (!isLoggedIn) {
+      onClose();
+      navigate('/Login'); // Redirect to login if not logged in
+    } else {
+      onPaymentClick(); // Continue with payment if logged in
+    }
+  };
 
   return (
     <Transition.Root show as={Fragment} className='bg-background'>
@@ -114,7 +127,7 @@ export default function Cart({ items, onClose, onPaymentClick }) { //items all p
                       <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                       <div className="mt-6">
                         <a
-                          onClick={onPaymentClick}
+                          onClick={handleCheckout}
                           href="#"
                           className="flex items-center justify-center rounded-md border border-transparent bg-custom-green px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-bg-custom-green-700"
                         >

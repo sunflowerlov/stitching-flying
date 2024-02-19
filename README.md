@@ -1,5 +1,5 @@
 Stitch flying
-React + Liquid + ruby + tailwind css + scss 
+React + sql + python + tailwind css + scss 
 
 server:
 source server/venv/bin/activate
