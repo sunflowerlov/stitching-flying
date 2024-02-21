@@ -80,6 +80,7 @@ function Payment({ items, onClose }) {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
         body: JSON.stringify(orderData),
       });
 
