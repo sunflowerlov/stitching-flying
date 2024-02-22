@@ -1,9 +1,9 @@
 import { StarIcon } from '@heroicons/react/20/solid'
 
-import main from '../../assets/images/shop/item2/main.JPG'
-import detail_l from '../../assets/images/shop/item2/detail_l.jpg'
-import detail_r from '../../assets/images/shop/item1/detail_r.jpg'
-import detail_front from '../../assets/images/shop/item2/detail_front.jpg'
+import main from '../../assets/images/shop/item4/main.jpg'
+import detail_l from '../../assets/images/shop/item4/l.jpg'
+import detail_r from '../../assets/images/shop/item4/r.JPG'
+import detail_front from '../../assets/images/shop/item4/f.JPG'
 
 const product = {
   name: 'Camellia',
@@ -11,19 +11,20 @@ const product = {
   href: '#',
   images: [
     {
-      src: detail_front,
+      src: detail_l,
       alt: 'Two each of gray, white, and black shirts laying flat.',
     },
     {
-      src: detail_r,
+      src: main,
       alt: 'Model wearing plain black basic tee.',
     },
     {
-      src: detail_l,
+      
+      src: detail_front,
       alt: 'Model wearing plain gray basic tee.',
     },
     {
-      src: main,
+      src: detail_r,
       alt: 'Model wearing plain white basic tee.',
     },
   ],
