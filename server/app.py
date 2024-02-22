@@ -181,10 +181,9 @@ def place_order():
 #get order history
 @app.route('/api/order-history', methods=['GET'])
 def get_order_history():
-    user_id = request.args.get('user_id')  # Retrieve user_id from query parameters
-
+    user_id = session.get('user_id')
     if not user_id:
-        return jsonify({"error": "User ID is required"}), 400  # Return error if user_id is not provided
+        return jsonify({"error": "User not logged in or session expired"}), 401  # Unauthorized
 
     conn = None
     try:
